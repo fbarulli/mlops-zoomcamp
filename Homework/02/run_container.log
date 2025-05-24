@@ -1,0 +1,123 @@
+=== Starting Docker Container Run ===
+Timestamp: Sat May 24 17:21:18 UTC 2025
+Loading environment variables...
+Found .env file, loading variables...
+MLFLOW_TRACKING_URI=mlflow+https://dagshub.com/fbarulli/MLOPS-DataTalks.mlflow
+MLFLOW_TRACKING_USERNAME="fbarulli"  
+MLFLOW_TRACKING_TOKEN="71f26894d16c0acc62defa4c841c90f2f2ae4716" 
+MLFLOW_TRACKING_PASSWORD="71f26894d16c0acc62defa4c841c90f2f2ae4716"
+CONTAINER_APP_OUTPUT_DIR="/app/outputs"
+TRAIN_IMAGE_NAME="data-talks-cab-2025"
+TRAIN_CONTAINER_NAME_PREFIX="HW02-2025"
+TRAIN_LOG_FILE="run_container.log"
+BENTOML_SERVICE_NAME="cab_service_2025"
+BENTOML_MODEL_NAME_IN_BENTO="cab_model "
+BENTOML_MLFLOW_MODEL_SOURCE="mlflow://data-talks-HW02:Staging"
+BENTOML_RUNNER_NAME="${BENTOML_MODEL_NAME_IN_BENTO}_runner"
+Relevant environment variables:
+CONTAINER_APP_OUTPUT_DIR=/app/outputs
+BENTOML_SERVICE_NAME=cab_service_2025
+BENTOML_MODEL_NAME_IN_BENTO=cab_model
+MLFLOW_TRACKING_URI=mlflow+https://dagshub.com/fbarulli/MLOPS-DataTalks.mlflow
+BENTOML_MLFLOW_MODEL_SOURCE=mlflow://data-talks-HW02:Staging
+TRAIN_LOG_FILE=run_container.log
+TRAIN_IMAGE_NAME=data-talks-cab-2025
+MLFLOW_TRACKING_USERNAME=fbarulli
+TRAIN_CONTAINER_NAME_PREFIX=HW02-2025
+BENTOML_RUNNER_NAME=${BENTOML_MODEL_NAME_IN_BENTO}_runner
+MLFLOW_TRACKING_PASSWORD=71f26894d16c0acc62defa4c841c90f2f2ae4716
+MLFLOW_TRACKING_TOKEN=71f26894d16c0acc62defa4c841c90f2f2ae4716
+Building Docker image data-talks-cab-2025...
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from dockerfile
+#1 transferring dockerfile: 759B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.10-slim
+#2 ...
+
+#3 [auth] library/python:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.10-slim
+#2 DONE 0.7s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [1/8] FROM docker.io/library/python:3.10-slim@sha256:49454d2bf78a48f217eb25ecbcb4b5face313fea6a6e82706465a6990303ada2
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 transferring context: 99B done
+#6 DONE 0.0s
+
+#7 [3/8] COPY requirements.txt .
+#7 CACHED
+
+#8 [4/8] COPY preprocess_data.py .
+#8 CACHED
+
+#9 [7/8] RUN pip install --no-cache-dir --upgrade pip
+#9 CACHED
+
+#10 [5/8] COPY .env .
+#10 CACHED
+
+#11 [6/8] RUN apt-get update && apt-get install -y --no-install-recommends     libgomp1     git     && rm -rf /var/lib/apt/lists/*
+#11 CACHED
+
+#12 [2/8] WORKDIR /app
+#12 CACHED
+
+#13 [8/8] RUN pip install --no-cache-dir -r requirements.txt
+#13 CACHED
+
+#14 exporting to image
+#14 exporting layers done
+#14 writing image sha256:4e2f998dfd96928b1049d4013cd223c1987d115af60d50af5bb8c7b6ca5b16eb done
+#14 naming to docker.io/library/data-talks-cab-2025 done
+#14 DONE 0.0s
+
+ [33m2 warnings found (use docker --debug to expand):
+[0m - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "MLFLOW_TRACKING_TOKEN") (line 23)
+ - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "MLFLOW_TRACKING_PASSWORD") (line 24)
+Running container HW02-2025-20250524_172118...
+=================== CONTAINER OUTPUT ===================
+Traceback (most recent call last):
+  File "/app/preprocess_data.py", line 83, in <module>
+    run_data_prep()
+  File "/usr/local/lib/python3.10/site-packages/click/core.py", line 1442, in __call__
+    return self.main(*args, **kwargs)
+  File "/usr/local/lib/python3.10/site-packages/click/core.py", line 1363, in main
+    rv = self.invoke(ctx)
+  File "/usr/local/lib/python3.10/site-packages/click/core.py", line 1226, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+  File "/usr/local/lib/python3.10/site-packages/click/core.py", line 794, in invoke
+    return callback(*args, **kwargs)
+  File "/app/preprocess_data.py", line 50, in run_data_prep
+    df_train = read_dataframe(
+  File "/app/preprocess_data.py", line 15, in read_dataframe
+    df = pd.read_parquet(filename)
+  File "/usr/local/lib/python3.10/site-packages/pandas/io/parquet.py", line 667, in read_parquet
+    return impl.read(
+  File "/usr/local/lib/python3.10/site-packages/pandas/io/parquet.py", line 267, in read
+    path_or_handle, handles, filesystem = _get_path_or_handle(
+  File "/usr/local/lib/python3.10/site-packages/pandas/io/parquet.py", line 140, in _get_path_or_handle
+    handles = get_handle(
+  File "/usr/local/lib/python3.10/site-packages/pandas/io/common.py", line 882, in get_handle
+    handle = open(handle, ioargs.mode)
+FileNotFoundError: [Errno 2] No such file or directory: 'green_tripdata_2023-01.parquet'
+Container exited with error code 1. Check run_container.log for details.
+Performing aggressive Docker cleanup...
+Total reclaimed space: 0B
+Deleted Images:
+untagged: data-talks-cab-2025:latest
+deleted: sha256:4e2f998dfd96928b1049d4013cd223c1987d115af60d50af5bb8c7b6ca5b16eb
+
+Total reclaimed space: 0B
+Total reclaimed space: 0B
+Cleanup complete.
+Full logs available in: run_container.log

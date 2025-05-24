@@ -23,9 +23,22 @@ logger = logging.getLogger(__name__)
 
 
 
-
-
-
+def load_data():
+    try:
+        logger.info("Loading data from download_preprocess.py")
+        from download_preprocess import main as download_main
+        X_train, X_val, y_train, y_val, y_test, dv, target = download_main()
+        return X_train, X_val, y_train, y_val, dv
+    except Exception as e:
+        logger.exception("Failed to load data")
+        raise
+    
+def train_linear_regression(X_train, X_val, y_val, dv):
+    try:
+        logger.info("Training Linear Regression")
+        mlflow.sklearn.autolog()
+        with mlflow.start_run():
+            mlflow.set_tag("dev", "Fabian")
 
 
 

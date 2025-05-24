@@ -2,24 +2,17 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pickle
 import pandas as pd
-
+import os
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import Lasso
 from sklearn.linear_model import Ridge
-
 from sklearn.metrics import root_mean_squared_error
-
-
 import logging 
-
-import logging
-import pandas as pd
-from typing import Tuple, Optional
-from sklearn.feature_extraction import DictVectorizer
 import numpy as np
+from typing import Tuple, Optional
 
-# Configure logging
+
 logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler()])
 logger = logging.getLogger(__name__)
 
@@ -42,14 +35,11 @@ def preprocess(df: pd.DataFrame, dv: Optional[DictVectorizer] = None, fit_dv: bo
         df = df.copy()  
         df['duration'] = (df['lpep_dropoff_datetime'] - df['lpep_pickup_datetime']).apply(lambda td: td.total_seconds() / 60)
         df = df[(df.duration >= 1) & (df.duration <= 60)]
-
         
         categorical = ['PULocationID', 'DOLocationID']
         df[categorical] = df[categorical].astype(str)
-
         
         dicts = df[categorical].to_dict(orient='records')
-        
         
         if fit_dv:
             dv = DictVectorizer()
@@ -91,12 +81,33 @@ def fit_dict(df_train: pd.DataFrame, df_val: pd.DataFrame, df_test: pd.DataFrame
         logger.exception("Vectorization Failed")
         raise
 
+def save_data_and_vectorizer(df_train: pd.DataFrame, df_val: pd.DataFrame, df_test: pd.DataFrame, dv: DictVectorizer, output_dir: str = "data") -> None:
+    try:
+        logger.info("Saving datasets and vectorizer")
+        
+        
+        os.makedirs(output_dir, exist_ok=True)
+        
+        
+        df_train.to_csv(os.path.join(output_dir, "green_tripdata_2023-01.csv"), index=False)
+        df_val.to_csv(os.path.join(output_dir, "green_tripdata_2023-02.csv"), index=False)
+        df_test.to_csv(os.path.join(output_dir, "green_tripdata_2023-03.csv"), index=False)
+        
+        
+        with open(os.path.join(output_dir, "dict_vectorizer.pkl"), "wb") as f:
+            pickle.dump(dv, f)
+        
+        logger.info("Datasets and vectorizer saved successfully")
+    except Exception as e:
+        logger.exception("Failed to save datasets or vectorizer")
+        raise
+
 def main():
     try:
-        
         df_train, df_val, df_test = download_data()
         X_train, X_val, X_test, dv = fit_dict(df_train, df_val, df_test)
         target, y_train, y_val, y_test = extract_x_y(df_train, df_val, df_test)
+        save_data_and_vectorizer(df_train, df_val, df_test, dv)
         logger.info("Pipeline completed successfully")
         return X_train, X_val, X_test, y_train, y_val, y_test, dv, target
     except Exception as e:
